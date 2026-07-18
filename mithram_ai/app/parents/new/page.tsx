@@ -122,6 +122,10 @@ export default function NewParentPage() {
           Save the elder profile and one medicine so the first call can ask the
           fixed wellness questions.
         </p>
+        <p className="mt-2 max-w-2xl text-sm text-zinc-500">
+          Mandatory fields: parent name, phone number, relation, call time, and
+          each medicine&apos;s name, dosage, and time.
+        </p>
       </div>
 
       <form
@@ -436,13 +440,19 @@ export default function NewParentPage() {
         </div>
 
         {error ? <p className="mt-4 text-sm text-red-600">{error}</p> : null}
+        {!userId ? (
+          <p className="mt-4 text-sm text-amber-700">
+            Login session not found. Please sign in again to add a parent.
+          </p>
+        ) : null}
 
         <button
           type="submit"
           disabled={!userId || isSubmitting}
+          title={!userId ? "Login session not found" : undefined}
           className="mt-6 rounded-md bg-teal-700 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-400"
         >
-          {isSubmitting ? "Saving..." : "Save parent"}
+          {isSubmitting ? "Adding..." : "Add parent"}
         </button>
       </form>
     </AppShell>

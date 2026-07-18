@@ -7,6 +7,11 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 
 type CallFrequency = "1x_day" | "2x_day" | "3x_day";
+type VoicePreference =
+  | "warm_female"
+  | "calm_male"
+  | "slow_friendly"
+  | "clear_neutral";
 
 type MedicineRow = {
   id: number;
@@ -23,6 +28,8 @@ export default function NewParentPage() {
   const [error, setError] = useState("");
   const [callFrequency, setCallFrequency] =
     useState<CallFrequency>("1x_day");
+  const [voicePreference, setVoicePreference] =
+    useState<VoicePreference>("warm_female");
   const [medicineRows, setMedicineRows] = useState<MedicineRow[]>([{ id: 1 }]);
   const [questionRows, setQuestionRows] = useState<QuestionRow[]>([]);
   const [hasSecurityCodeExpiry, setHasSecurityCodeExpiry] = useState(true);
@@ -121,6 +128,36 @@ export default function NewParentPage() {
     router.push("/dashboard");
   }
 
+  function previewVoice() {
+    if (typeof window === "undefined" || !window.speechSynthesis) {
+      setError("Voice preview is not supported in this browser");
+      return;
+    }
+
+    setError("");
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(
+      "Namaskaram, ithu Mithram AI aanu. Marunnu kazhicho? Sukham alle?",
+    );
+    const settings = getVoicePreviewSettings(voicePreference);
+
+    utterance.lang = "en-IN";
+    utterance.pitch = settings.pitch;
+    utterance.rate = settings.rate;
+
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice =
+      voices.find((voice) => voice.lang === "en-IN") ??
+      voices.find((voice) => voice.lang.startsWith("en"));
+
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    }
+
+    window.speechSynthesis.speak(utterance);
+  }
+
   return (
     <AppShell>
       <div className="mb-6">
@@ -185,23 +222,35 @@ export default function NewParentPage() {
         </div>
 
         <div className="mt-4 rounded-md border border-zinc-200 bg-zinc-50 p-4">
-          <label
-            className="block text-sm font-medium"
-            htmlFor="voicePreference"
-          >
-            Voice preference
-            <select
-              id="voicePreference"
-              name="voicePreference"
-              className="mt-2 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm font-normal outline-none focus:border-teal-700"
-              defaultValue="warm_female"
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <label
+              className="block flex-1 text-sm font-medium"
+              htmlFor="voicePreference"
             >
-              <option value="warm_female">Warm female voice</option>
-              <option value="calm_male">Calm male voice</option>
-              <option value="slow_friendly">Slow elder-friendly voice</option>
-              <option value="clear_neutral">Clear neutral voice</option>
-            </select>
-          </label>
+              Voice preference
+              <select
+                id="voicePreference"
+                name="voicePreference"
+                value={voicePreference}
+                onChange={(event) =>
+                  setVoicePreference(event.target.value as VoicePreference)
+                }
+                className="mt-2 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm font-normal outline-none focus:border-teal-700"
+              >
+                <option value="warm_female">Warm female voice</option>
+                <option value="calm_male">Calm male voice</option>
+                <option value="slow_friendly">Slow elder-friendly voice</option>
+                <option value="clear_neutral">Clear neutral voice</option>
+              </select>
+            </label>
+            <button
+              type="button"
+              onClick={previewVoice}
+              className="rounded-md border border-teal-700 px-4 py-2 text-sm font-medium text-teal-700 hover:bg-teal-50"
+            >
+              Preview
+            </button>
+          </div>
           <p className="mt-2 text-sm text-zinc-600">
             Saved for future personalization. The current live call continues
             with the fixed demo voice.
@@ -523,6 +572,20 @@ function getDefaultSecurityCodeExpiry() {
   date.setMonth(date.getMonth() + 1);
 
   return date.toISOString().slice(0, 10);
+}
+
+function getVoicePreviewSettings(voicePreference: VoicePreference) {
+  switch (voicePreference) {
+    case "calm_male":
+      return { pitch: 0.8, rate: 0.9 };
+    case "slow_friendly":
+      return { pitch: 1, rate: 0.75 };
+    case "clear_neutral":
+      return { pitch: 1, rate: 1 };
+    case "warm_female":
+    default:
+      return { pitch: 1.15, rate: 0.92 };
+  }
 }
 
 type FieldProps = {

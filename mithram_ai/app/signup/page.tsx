@@ -24,6 +24,7 @@ export default function SignupPage() {
         email: formData.get("email"),
         password: formData.get("password"),
         phone: formData.get("phone"),
+        consentAccepted: formData.has("consentAccepted"),
       }),
     });
     const payload = await response.json();
@@ -89,6 +90,29 @@ export default function SignupPage() {
           Password
           <PasswordInput id="password" name="password" required />
         </label>
+
+        <section className="mt-5 rounded-md border border-teal-200 bg-teal-50 p-4">
+          <h2 className="text-sm font-semibold text-teal-950">
+            Privacy and consent
+          </h2>
+          <p className="mt-2 text-sm text-teal-900">
+            Mithram AI stores caregiver, parent, medicine, and call transcript
+            data only to provide wellness check-ins and escalation support. Your
+            data is never sold.
+          </p>
+          <label className="mt-3 flex items-start gap-3 text-sm text-teal-950">
+            <input
+              name="consentAccepted"
+              type="checkbox"
+              required
+              className="mt-0.5 size-4 rounded border-teal-300"
+            />
+            <span>
+              I have permission to store this data and to use automated calls
+              for elder wellness check-ins.
+            </span>
+          </label>
+        </section>
 
         {error ? <p className="mt-4 text-sm text-red-600">{error}</p> : null}
 

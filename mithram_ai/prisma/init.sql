@@ -6,6 +6,9 @@ CREATE TABLE IF NOT EXISTS User (
   email TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
   phone TEXT NOT NULL,
+  consentAccepted BOOLEAN NOT NULL DEFAULT false,
+  consentAcceptedAt DATETIME,
+  trialEndsAt DATETIME,
   createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

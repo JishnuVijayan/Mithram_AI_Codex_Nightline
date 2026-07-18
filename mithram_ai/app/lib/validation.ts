@@ -5,6 +5,9 @@ export const signupSchema = z.object({
   email: z.email("Enter a valid email").toLowerCase(),
   password: z.string().min(1, "Password is required"),
   phone: z.string().trim().min(1, "Phone is required"),
+  consentAccepted: z.literal(true, {
+    error: "Consent is required to create an account",
+  }),
 });
 
 export const loginSchema = z.object({

@@ -5,6 +5,7 @@ type SignupInput = {
   email: string;
   password: string;
   phone: string;
+  consentAccepted: true;
 };
 
 type ParentInput = {
@@ -34,8 +35,15 @@ type MedicineInput = {
 };
 
 export function createUser(data: SignupInput) {
+  const trialEndsAt = new Date();
+  trialEndsAt.setDate(trialEndsAt.getDate() + 7);
+
   return prisma.user.create({
-    data,
+    data: {
+      ...data,
+      consentAcceptedAt: new Date(),
+      trialEndsAt,
+    },
     select: { id: true },
   });
 }

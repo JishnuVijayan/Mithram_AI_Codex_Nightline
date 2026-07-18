@@ -13,6 +13,9 @@ model User {
   email     String   @unique
   password  String
   phone     String
+  consentAccepted   Boolean   @default(false)
+  consentAcceptedAt DateTime?
+  trialEndsAt       DateTime?
   parents   Parent[]
   createdAt DateTime @default(now())
 }

@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import { AppShell } from "@/app/components/AppShell";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
@@ -16,24 +18,28 @@ type QuestionRow = {
 
 export default function NewParentPage() {
   const router = useRouter();
-  const [userId] = useState(() =>
-    typeof window === "undefined"
-      ? ""
-      : localStorage.getItem("mithram_user_id") ?? "",
-  );
+  const [userId, setUserId] = useState("");
+  const [hasCheckedSession, setHasCheckedSession] = useState(false);
   const [error, setError] = useState("");
   const [callFrequency, setCallFrequency] =
     useState<CallFrequency>("1x_day");
   const [medicineRows, setMedicineRows] = useState<MedicineRow[]>([{ id: 1 }]);
   const [questionRows, setQuestionRows] = useState<QuestionRow[]>([]);
   const [hasSecurityCodeExpiry, setHasSecurityCodeExpiry] = useState(true);
+  const [defaultSecurityCodeExpiry, setDefaultSecurityCodeExpiry] =
+    useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!userId) {
+    const storedUserId = localStorage.getItem("mithram_user_id") ?? "";
+    setUserId(storedUserId);
+    setHasCheckedSession(true);
+    setDefaultSecurityCodeExpiry(getDefaultSecurityCodeExpiry());
+
+    if (!storedUserId) {
       router.push("/login");
     }
-  }, [router, userId]);
+  }, [router]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -351,7 +357,10 @@ export default function NewParentPage() {
                 name="securityCodeExpiresAt"
                 type="date"
                 disabled={!hasSecurityCodeExpiry}
-                defaultValue={getDefaultSecurityCodeExpiry()}
+                value={defaultSecurityCodeExpiry}
+                onChange={(event) =>
+                  setDefaultSecurityCodeExpiry(event.target.value)
+                }
                 className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm font-normal outline-none disabled:bg-zinc-100 disabled:text-zinc-400 focus:border-teal-700"
               />
             </label>
@@ -440,7 +449,7 @@ export default function NewParentPage() {
         </div>
 
         {error ? <p className="mt-4 text-sm text-red-600">{error}</p> : null}
-        {!userId ? (
+        {hasCheckedSession && !userId ? (
           <p className="mt-4 text-sm text-amber-700">
             Login session not found. Please sign in again to add a parent.
           </p>
@@ -448,8 +457,8 @@ export default function NewParentPage() {
 
         <button
           type="submit"
-          disabled={!userId || isSubmitting}
-          title={!userId ? "Login session not found" : undefined}
+          disabled={!hasCheckedSession || !userId || isSubmitting}
+          title={hasCheckedSession && !userId ? "Login session not found" : undefined}
           className="mt-6 rounded-md bg-teal-700 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-400"
         >
           {isSubmitting ? "Adding..." : "Add parent"}

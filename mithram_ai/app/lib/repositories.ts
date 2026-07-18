@@ -15,6 +15,15 @@ type ParentInput = {
   preferredLanguage: string;
   callFrequency: string;
   callTimes: string;
+  retryCount: number;
+  retryGapMinutes: number;
+  notifySms: boolean;
+  notifyEmail: boolean;
+  notifyPush: boolean;
+  callEmergency: boolean;
+  emergencyName?: string;
+  emergencyRelation?: string;
+  emergencyPhone?: string;
 };
 
 type MedicineInput = {

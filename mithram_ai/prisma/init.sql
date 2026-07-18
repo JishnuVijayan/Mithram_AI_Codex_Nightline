@@ -18,6 +18,15 @@ CREATE TABLE IF NOT EXISTS Parent (
   preferredLanguage TEXT NOT NULL,
   callFrequency TEXT NOT NULL,
   callTimes TEXT NOT NULL,
+  retryCount INTEGER NOT NULL DEFAULT 0,
+  retryGapMinutes INTEGER NOT NULL DEFAULT 15,
+  notifySms BOOLEAN NOT NULL DEFAULT true,
+  notifyEmail BOOLEAN NOT NULL DEFAULT false,
+  notifyPush BOOLEAN NOT NULL DEFAULT false,
+  callEmergency BOOLEAN NOT NULL DEFAULT false,
+  emergencyName TEXT,
+  emergencyRelation TEXT,
+  emergencyPhone TEXT,
   createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT Parent_userId_fkey FOREIGN KEY (userId)
     REFERENCES User(id) ON DELETE CASCADE ON UPDATE CASCADE

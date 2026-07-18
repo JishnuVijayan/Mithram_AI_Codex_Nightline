@@ -27,6 +27,15 @@ model Parent {
   preferredLanguage String
   callFrequency     String
   callTimes         String
+  retryCount        Int        @default(0)
+  retryGapMinutes   Int        @default(15)
+  notifySms         Boolean    @default(true)
+  notifyEmail       Boolean    @default(false)
+  notifyPush        Boolean    @default(false)
+  callEmergency     Boolean    @default(false)
+  emergencyName     String?
+  emergencyRelation String?
+  emergencyPhone    String?
   medicines         Medicine[]
   callLogs          CallLog[]
   createdAt         DateTime   @default(now())

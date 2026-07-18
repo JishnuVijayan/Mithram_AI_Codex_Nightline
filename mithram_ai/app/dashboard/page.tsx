@@ -24,6 +24,15 @@ type Parent = {
   relation: string;
   phoneNumber: string;
   preferredLanguage: string;
+  retryCount: number;
+  retryGapMinutes: number;
+  notifySms: boolean;
+  notifyEmail: boolean;
+  notifyPush: boolean;
+  callEmergency: boolean;
+  emergencyName: string | null;
+  emergencyRelation: string | null;
+  emergencyPhone: string | null;
   latestCall: CallLog | null;
 };
 
@@ -198,11 +207,19 @@ export default function DashboardPage() {
               <h2 className="text-base font-semibold">
                 {selectedParent?.name ?? "Call history"}
               </h2>
-          <p className="mt-1 text-sm text-zinc-600">
-            {selectedParent
+              <p className="mt-1 text-sm text-zinc-600">
+                {selectedParent
                   ? `${selectedParent.phoneNumber} · ${selectedParent.relation}`
                   : "Choose a parent to inspect transcripts."}
-          </p>
+              </p>
+              {selectedParent ? (
+                <p className="mt-2 text-xs text-zinc-500">
+                  Retry {selectedParent.retryCount} time
+                  {selectedParent.retryCount === 1 ? "" : "s"} every{" "}
+                  {selectedParent.retryGapMinutes} min · Escalation{" "}
+                  {selectedParent.callEmergency ? "enabled" : "off"}
+                </p>
+              ) : null}
             </div>
 
             {selectedParent ? (
@@ -218,6 +235,48 @@ export default function DashboardPage() {
           </div>
 
           <div className="mt-6 space-y-4">
+            {selectedParent ? (
+              <section className="rounded-md border border-zinc-200 bg-zinc-50 p-4">
+                <h3 className="text-sm font-semibold">
+                  Retry and escalation status
+                </h3>
+                <div className="mt-3 grid gap-3 text-sm text-zinc-700 sm:grid-cols-2">
+                  <p>
+                    Failed-call retries:{" "}
+                    <span className="font-medium text-zinc-950">
+                      {selectedParent.retryCount}
+                    </span>
+                  </p>
+                  <p>
+                    Retry gap:{" "}
+                    <span className="font-medium text-zinc-950">
+                      {selectedParent.retryGapMinutes} minutes
+                    </span>
+                  </p>
+                  <p>
+                    Notifications:{" "}
+                    <span className="font-medium text-zinc-950">
+                      {[
+                        selectedParent.notifySms ? "SMS" : null,
+                        selectedParent.notifyEmail ? "Email" : null,
+                        selectedParent.notifyPush ? "Push" : null,
+                      ]
+                        .filter(Boolean)
+                        .join(", ") || "None"}
+                    </span>
+                  </p>
+                  <p>
+                    Emergency contact:{" "}
+                    <span className="font-medium text-zinc-950">
+                      {selectedParent.emergencyName
+                        ? `${selectedParent.emergencyName} (${selectedParent.emergencyRelation || "Contact"})`
+                        : "Not configured"}
+                    </span>
+                  </p>
+                </div>
+              </section>
+            ) : null}
+
             {calls.length === 0 ? (
               <p className="text-sm text-zinc-600">No call logs yet.</p>
             ) : (

@@ -46,6 +46,15 @@ export default function NewParentPage() {
         preferredLanguage: formData.get("preferredLanguage"),
         callFrequency: formData.get("callFrequency"),
         callTimes,
+        retryCount: Number(formData.get("retryCount") || 0),
+        retryGapMinutes: Number(formData.get("retryGapMinutes") || 15),
+        notifySms: formData.has("notifySms"),
+        notifyEmail: formData.has("notifyEmail"),
+        notifyPush: formData.has("notifyPush"),
+        callEmergency: formData.has("callEmergency"),
+        emergencyName: formData.get("emergencyName"),
+        emergencyRelation: formData.get("emergencyRelation"),
+        emergencyPhone: formData.get("emergencyPhone"),
       }),
     });
     const parentPayload = await parentResponse.json();
@@ -174,6 +183,81 @@ export default function NewParentPage() {
           <Field label="Time" name="timeOfDay" type="time" required />
         </div>
 
+        <h2 className="mt-8 text-base font-semibold">
+          Escalation management
+        </h2>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <label className="block text-sm font-medium" htmlFor="retryCount">
+            Retry count after no answer
+            <select
+              id="retryCount"
+              name="retryCount"
+              defaultValue="2"
+              className="mt-2 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm font-normal outline-none focus:border-teal-700"
+            >
+              <option value="0">No retries</option>
+              <option value="1">1 retry</option>
+              <option value="2">2 retries</option>
+              <option value="3">3 retries</option>
+              <option value="5">5 retries</option>
+            </select>
+          </label>
+
+          <label
+            className="block text-sm font-medium"
+            htmlFor="retryGapMinutes"
+          >
+            Gap between retries
+            <select
+              id="retryGapMinutes"
+              name="retryGapMinutes"
+              defaultValue="15"
+              className="mt-2 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm font-normal outline-none focus:border-teal-700"
+            >
+              <option value="5">5 minutes</option>
+              <option value="10">10 minutes</option>
+              <option value="15">15 minutes</option>
+              <option value="30">30 minutes</option>
+              <option value="60">1 hour</option>
+            </select>
+          </label>
+        </div>
+
+        <div className="mt-4 rounded-md border border-zinc-200 p-4">
+          <p className="text-sm font-medium">Notification rules</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <Checkbox
+              label="Send SMS after each failed attempt"
+              name="notifySms"
+              defaultChecked
+            />
+            <Checkbox label="Send email alert" name="notifyEmail" />
+            <Checkbox label="Send push notification" name="notifyPush" />
+            <Checkbox
+              label="Call emergency contact after all retries fail"
+              name="callEmergency"
+            />
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+          <Field
+            label="Emergency contact"
+            name="emergencyName"
+            placeholder="Akhil"
+          />
+          <Field
+            label="Relation"
+            name="emergencyRelation"
+            placeholder="Son"
+          />
+          <Field
+            label="Emergency phone"
+            name="emergencyPhone"
+            placeholder="+91..."
+          />
+        </div>
+
         {error ? <p className="mt-4 text-sm text-red-600">{error}</p> : null}
 
         <button
@@ -185,6 +269,28 @@ export default function NewParentPage() {
         </button>
       </form>
     </AppShell>
+  );
+}
+
+function Checkbox({
+  label,
+  name,
+  defaultChecked,
+}: {
+  label: string;
+  name: string;
+  defaultChecked?: boolean;
+}) {
+  return (
+    <label className="flex items-start gap-3 text-sm text-zinc-700">
+      <input
+        name={name}
+        type="checkbox"
+        defaultChecked={defaultChecked}
+        className="mt-0.5 size-4 rounded border-zinc-300 text-teal-700"
+      />
+      <span>{label}</span>
+    </label>
   );
 }
 

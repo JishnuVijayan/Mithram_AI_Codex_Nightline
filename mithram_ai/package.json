@@ -3,28 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "dev": "next dev",
-
-  "build": "next build",
-
-  "start": "next start",
-
-  "lint": "eslint .",
-
-  "lint:fix": "next lint --fix",
-
-  "format": "prettier --write .",
-
-  "format:check": "prettier --check .",
-
-  "prisma:generate": "prisma generate",
-
-  "prisma:push": "prisma db push",
-
-  "prisma:studio": "prisma studio"
-},
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "lint:fix": "next lint --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "db:init": "sqlite3 prisma/dev.db < prisma/init.sql",
+    "prisma:studio": "prisma studio"
+  },
   "dependencies": {
-    "@prisma/client": "^7.8.0",
+    "@prisma/client": "^6.2.1",
     "axios": "^1.18.1",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
@@ -35,7 +27,7 @@
     "lucide-react": "^1.25.0",
     "next": "16.2.10",
     "openai": "^6.48.0",
-    "prisma": "^7.8.0",
+    "prisma": "^6.2.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.82.0",

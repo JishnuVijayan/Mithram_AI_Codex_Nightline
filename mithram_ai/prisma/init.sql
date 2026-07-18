@@ -1,0 +1,58 @@
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS User (
+  id TEXT PRIMARY KEY NOT NULL,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS Parent (
+  id TEXT PRIMARY KEY NOT NULL,
+  userId TEXT NOT NULL,
+  name TEXT NOT NULL,
+  phoneNumber TEXT NOT NULL,
+  relation TEXT NOT NULL,
+  preferredLanguage TEXT NOT NULL,
+  callFrequency TEXT NOT NULL,
+  callTimes TEXT NOT NULL,
+  createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT Parent_userId_fkey FOREIGN KEY (userId)
+    REFERENCES User(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS Parent_userId_idx ON Parent(userId);
+
+CREATE TABLE IF NOT EXISTS Medicine (
+  id TEXT PRIMARY KEY NOT NULL,
+  parentId TEXT NOT NULL,
+  name TEXT NOT NULL,
+  dosage TEXT NOT NULL,
+  timeOfDay TEXT NOT NULL,
+  createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT Medicine_parentId_fkey FOREIGN KEY (parentId)
+    REFERENCES Parent(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS Medicine_parentId_idx ON Medicine(parentId);
+
+CREATE TABLE IF NOT EXISTS CallLog (
+  id TEXT PRIMARY KEY NOT NULL,
+  parentId TEXT NOT NULL,
+  callDatetime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  status TEXT NOT NULL,
+  callSid TEXT,
+  q1Answer TEXT,
+  q2Answer TEXT,
+  q3Answer TEXT,
+  medicineFlag TEXT,
+  sentimentFlag TEXT,
+  createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT CallLog_parentId_fkey FOREIGN KEY (parentId)
+    REFERENCES Parent(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS CallLog_parentId_idx ON CallLog(parentId);
+CREATE INDEX IF NOT EXISTS CallLog_status_idx ON CallLog(status);

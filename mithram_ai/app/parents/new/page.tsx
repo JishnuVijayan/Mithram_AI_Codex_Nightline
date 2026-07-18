@@ -6,6 +6,10 @@ import { FormEvent, useEffect, useState } from "react";
 
 type CallFrequency = "1x_day" | "2x_day" | "3x_day";
 
+type MedicineRow = {
+  id: number;
+};
+
 export default function NewParentPage() {
   const router = useRouter();
   const [userId] = useState(() =>
@@ -16,6 +20,7 @@ export default function NewParentPage() {
   const [error, setError] = useState("");
   const [callFrequency, setCallFrequency] =
     useState<CallFrequency>("1x_day");
+  const [medicineRows, setMedicineRows] = useState<MedicineRow[]>([{ id: 1 }]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -66,20 +71,24 @@ export default function NewParentPage() {
       return;
     }
 
-    const medicineResponse = await fetch("/api/medicines", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        parentId: parentPayload.parentId,
-        name: formData.get("medicineName"),
-        dosage: formData.get("dosage"),
-        timeOfDay: formData.get("timeOfDay"),
+    const medicineRequests = medicineRows.map((row) =>
+      fetch("/api/medicines", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          parentId: parentPayload.parentId,
+          name: formData.get(`medicineName-${row.id}`),
+          dosage: formData.get(`dosage-${row.id}`),
+          timeOfDay: formData.get(`timeOfDay-${row.id}`),
+        }),
       }),
-    });
-    const medicinePayload = await medicineResponse.json();
+    );
+    const medicineResponses = await Promise.all(medicineRequests);
+    const failedMedicine = medicineResponses.find((response) => !response.ok);
     setIsSubmitting(false);
 
-    if (!medicineResponse.ok) {
+    if (failedMedicine) {
+      const medicinePayload = await failedMedicine.json();
       setError(medicinePayload.error ?? "Parent saved, medicine failed");
       return;
     }
@@ -188,16 +197,63 @@ export default function NewParentPage() {
           )}
         </div>
 
-        <h2 className="mt-8 text-base font-semibold">Medicine</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-3">
-          <Field
-            label="Medicine"
-            name="medicineName"
-            placeholder="BP tablet"
-            required
-          />
-          <Field label="Dosage" name="dosage" placeholder="1 tablet" required />
-          <Field label="Time" name="timeOfDay" type="time" required />
+        <div className="mt-8 flex items-center justify-between gap-4">
+          <h2 className="text-base font-semibold">Medicines</h2>
+          <button
+            type="button"
+            onClick={() =>
+              setMedicineRows((rows) => [...rows, { id: Date.now() }])
+            }
+            className="rounded-md border border-teal-700 px-3 py-1.5 text-sm font-medium text-teal-700 hover:bg-teal-50"
+          >
+            Add medicine
+          </button>
+        </div>
+
+        <div className="mt-4 space-y-4">
+          {medicineRows.map((row, index) => (
+            <div
+              key={row.id}
+              className="rounded-md border border-zinc-200 p-4"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-sm font-medium">Medicine {index + 1}</p>
+                {medicineRows.length > 1 ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setMedicineRows((rows) =>
+                        rows.filter((item) => item.id !== row.id),
+                      )
+                    }
+                    className="text-sm font-medium text-rose-700 hover:text-rose-900"
+                  >
+                    Remove
+                  </button>
+                ) : null}
+              </div>
+              <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                <Field
+                  label="Medicine"
+                  name={`medicineName-${row.id}`}
+                  placeholder="BP tablet"
+                  required
+                />
+                <Field
+                  label="Dosage"
+                  name={`dosage-${row.id}`}
+                  placeholder="1 tablet"
+                  required
+                />
+                <Field
+                  label="Time"
+                  name={`timeOfDay-${row.id}`}
+                  type="time"
+                  required
+                />
+              </div>
+            </div>
+          ))}
         </div>
 
         <h2 className="mt-8 text-base font-semibold">

@@ -2,7 +2,9 @@ import { jsonError, serverError } from "@/app/lib/http";
 import {
   GOODBYES,
   normalizeLanguage,
+  normalizeDigitAnswer,
   QUESTIONS,
+  SPEECH_HINTS,
   twilioSpeechLanguage,
 } from "@/app/lib/questions";
 import {
@@ -10,7 +12,7 @@ import {
   markCallAnswered,
   saveCallAnswer,
 } from "@/app/lib/repositories";
-import { say, twimlResponse } from "@/app/lib/twiml";
+import { gatherAttributes, say, twimlResponse } from "@/app/lib/twiml";
 
 export async function POST(request: Request) {
   try {
@@ -23,7 +25,9 @@ export async function POST(request: Request) {
     }
 
     const formData = await request.formData();
-    const answer = String(formData.get("SpeechResult") || "(no response)");
+    const digitAnswer = normalizeDigitAnswer(step, String(formData.get("Digits") || ""));
+    const answer =
+      digitAnswer ?? String(formData.get("SpeechResult") || "(no response)");
     await saveCallAnswer(logId, step, answer);
 
     const callLog = await getCallLogWithParent(logId);
@@ -40,7 +44,7 @@ export async function POST(request: Request) {
       const action = `/api/twiml/step?logId=${encodeURIComponent(logId)}&step=${nextStep}`;
       const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Gather input="speech" language="${speechLanguage}" timeout="10" speechTimeout="auto" action="${action.replaceAll("&", "&amp;")}" method="POST">
+  <Gather ${gatherAttributes({ action, hints: SPEECH_HINTS, language: speechLanguage })}>
     ${say(QUESTIONS[language][step], speechLanguage)}
   </Gather>
   <Redirect method="POST">/api/twiml/step?logId=${encodeURIComponent(logId)}&amp;step=${step}</Redirect>

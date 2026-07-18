@@ -161,11 +161,11 @@ export default function DashboardPage() {
               <h2 className="text-base font-semibold">
                 {selectedParent?.name ?? "Call history"}
               </h2>
-              <p className="mt-1 text-sm text-zinc-600">
-                {selectedParent
+          <p className="mt-1 text-sm text-zinc-600">
+            {selectedParent
                   ? `${selectedParent.phoneNumber} · ${selectedParent.relation}`
                   : "Choose a parent to inspect transcripts."}
-              </p>
+          </p>
             </div>
 
             {selectedParent ? (
@@ -230,7 +230,9 @@ function TranscriptQuestion({
   return (
     <div>
       <dt className="font-medium text-zinc-700">{label}</dt>
-      <dd className="mt-1 text-zinc-600">{answer ?? "No answer captured yet"}</dd>
+      <dd className="mt-1 text-zinc-600">
+        {answer ?? "No transcript or keypad answer captured yet"}
+      </dd>
     </div>
   );
 }

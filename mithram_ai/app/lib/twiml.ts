@@ -18,3 +18,24 @@ export function escapeXml(value: string) {
 export function say(text: string, language: string) {
   return `<Say language="${language}">${escapeXml(text)}</Say>`;
 }
+
+export function gatherAttributes({
+  action,
+  hints,
+  language,
+}: {
+  action: string;
+  hints: string[];
+  language: string;
+}) {
+  return [
+    'input="speech dtmf"',
+    `language="${language}"`,
+    'timeout="10"',
+    'speechTimeout="auto"',
+    'numDigits="1"',
+    `hints="${escapeXml(hints.join(","))}"`,
+    `action="${escapeXml(action)}"`,
+    'method="POST"',
+  ].join(" ");
+}

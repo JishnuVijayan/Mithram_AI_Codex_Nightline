@@ -3,10 +3,11 @@ import {
   GREETINGS,
   normalizeLanguage,
   QUESTIONS,
+  SPEECH_HINTS,
   twilioSpeechLanguage,
 } from "@/app/lib/questions";
 import { getCallLogWithParent } from "@/app/lib/repositories";
-import { say, twimlResponse } from "@/app/lib/twiml";
+import { gatherAttributes, say, twimlResponse } from "@/app/lib/twiml";
 
 export async function POST(request: Request) {
   try {
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   ${say(GREETINGS[language], speechLanguage)}
-  <Gather input="speech" language="${speechLanguage}" timeout="10" speechTimeout="auto" action="${action.replaceAll("&", "&amp;")}" method="POST">
+  <Gather ${gatherAttributes({ action, hints: SPEECH_HINTS, language: speechLanguage })}>
     ${say(QUESTIONS[language][0], speechLanguage)}
   </Gather>
   <Redirect method="POST">/api/twiml/connect?logId=${encodeURIComponent(logId)}</Redirect>

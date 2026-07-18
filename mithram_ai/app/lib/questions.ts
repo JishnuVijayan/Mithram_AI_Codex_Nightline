@@ -55,6 +55,14 @@ export function twilioSpeechLanguage() {
   return "en-IN";
 }
 
+export function securityCodePrompt(language: SupportedLanguage, code: string) {
+  if (language === "Malayalam") {
+    return `Ithu genuine Mithram call aanu. Innu security code ${code} aanu.`;
+  }
+
+  return `This is a genuine Mithram call. Today's security code is ${code}.`;
+}
+
 export function normalizeDigitAnswer(step: number, digit?: string | null) {
   if (digit === "1") {
     return step === 3 ? "yes / undu" : "yes";

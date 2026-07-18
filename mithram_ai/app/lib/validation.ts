@@ -32,6 +32,9 @@ export const parentSchema = z.object({
   emergencyName: z.string().trim().optional(),
   emergencyRelation: z.string().trim().optional(),
   emergencyPhone: z.string().trim().optional(),
+  customQuestions: z.string().trim().optional(),
+  securityCode: z.string().trim().optional(),
+  securityCodeExpiresAt: z.coerce.date().optional().nullable(),
 });
 
 export const medicineSchema = z.object({

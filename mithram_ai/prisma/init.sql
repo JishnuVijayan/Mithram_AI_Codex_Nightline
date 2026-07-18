@@ -30,6 +30,9 @@ CREATE TABLE IF NOT EXISTS Parent (
   emergencyName TEXT,
   emergencyRelation TEXT,
   emergencyPhone TEXT,
+  customQuestions TEXT,
+  securityCode TEXT,
+  securityCodeExpiresAt DATETIME,
   createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT Parent_userId_fkey FOREIGN KEY (userId)
     REFERENCES User(id) ON DELETE CASCADE ON UPDATE CASCADE

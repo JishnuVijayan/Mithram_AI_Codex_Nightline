@@ -33,6 +33,9 @@ type Parent = {
   emergencyName: string | null;
   emergencyRelation: string | null;
   emergencyPhone: string | null;
+  customQuestions: string | null;
+  securityCode: string | null;
+  securityCodeExpiresAt: string | null;
   latestCall: CallLog | null;
 };
 
@@ -271,6 +274,22 @@ export default function DashboardPage() {
                       {selectedParent.emergencyName
                         ? `${selectedParent.emergencyName} (${selectedParent.emergencyRelation || "Contact"})`
                         : "Not configured"}
+                    </span>
+                  </p>
+                  <p>
+                    Security code:{" "}
+                    <span className="font-medium text-zinc-950">
+                      {selectedParent.securityCode
+                        ? `${selectedParent.securityCode}${selectedParent.securityCodeExpiresAt ? ` until ${new Date(selectedParent.securityCodeExpiresAt).toLocaleDateString()}` : ""}`
+                        : "Not configured"}
+                    </span>
+                  </p>
+                  <p>
+                    Custom questions:{" "}
+                    <span className="font-medium text-zinc-950">
+                      {selectedParent.customQuestions
+                        ? selectedParent.customQuestions.split("\n").length
+                        : 0}
                     </span>
                   </p>
                 </div>

@@ -10,6 +10,10 @@ type MedicineRow = {
   id: number;
 };
 
+type QuestionRow = {
+  id: number;
+};
+
 export default function NewParentPage() {
   const router = useRouter();
   const [userId] = useState(() =>
@@ -21,6 +25,8 @@ export default function NewParentPage() {
   const [callFrequency, setCallFrequency] =
     useState<CallFrequency>("1x_day");
   const [medicineRows, setMedicineRows] = useState<MedicineRow[]>([{ id: 1 }]);
+  const [questionRows, setQuestionRows] = useState<QuestionRow[]>([]);
+  const [hasSecurityCodeExpiry, setHasSecurityCodeExpiry] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -40,6 +46,15 @@ export default function NewParentPage() {
       .map((value) => String(value))
       .filter(Boolean)
       .join(",");
+    const customQuestions = questionRows
+      .map((row) => String(formData.get(`customQuestion-${row.id}`) || ""))
+      .filter(Boolean)
+      .join("\n");
+    const securityCode = String(formData.get("securityCode") || "").trim();
+    const securityCodeExpiresAt =
+      hasSecurityCodeExpiry && securityCode
+        ? formData.get("securityCodeExpiresAt")
+        : null;
 
     const parentResponse = await fetch("/api/parents", {
       method: "POST",
@@ -61,6 +76,9 @@ export default function NewParentPage() {
         emergencyName: formData.get("emergencyName"),
         emergencyRelation: formData.get("emergencyRelation"),
         emergencyPhone: formData.get("emergencyPhone"),
+        customQuestions,
+        securityCode,
+        securityCodeExpiresAt,
       }),
     });
     const parentPayload = await parentResponse.json();
@@ -256,6 +274,92 @@ export default function NewParentPage() {
           ))}
         </div>
 
+        <div className="mt-8 flex items-center justify-between gap-4">
+          <div>
+            <h2 className="text-base font-semibold">Custom questions</h2>
+            <p className="mt-1 text-sm text-zinc-600">
+              Saved for future configurable call flows. The current live call
+              still uses the fixed demo questions.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() =>
+              setQuestionRows((rows) => [...rows, { id: Date.now() }])
+            }
+            className="rounded-md border border-teal-700 px-3 py-1.5 text-sm font-medium text-teal-700 hover:bg-teal-50"
+          >
+            Add question
+          </button>
+        </div>
+
+        {questionRows.length > 0 ? (
+          <div className="mt-4 space-y-3">
+            {questionRows.map((row, index) => (
+              <div key={row.id} className="flex items-start gap-3">
+                <label
+                  className="block flex-1 text-sm font-medium"
+                  htmlFor={`customQuestion-${row.id}`}
+                >
+                  Question {index + 1}
+                  <input
+                    id={`customQuestion-${row.id}`}
+                    name={`customQuestion-${row.id}`}
+                    placeholder="Example: Did you have breakfast?"
+                    className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm font-normal outline-none focus:border-teal-700"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setQuestionRows((rows) =>
+                      rows.filter((item) => item.id !== row.id),
+                    )
+                  }
+                  className="mt-8 text-sm font-medium text-rose-700 hover:text-rose-900"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        <h2 className="mt-8 text-base font-semibold">Call security code</h2>
+        <div className="mt-4 rounded-md border border-zinc-200 p-4">
+          <p className="text-sm text-zinc-600">
+            Mithram will speak this code at the start of the call so your parent
+            can recognize that the call is genuine.
+          </p>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <Field
+              label="Security code"
+              name="securityCode"
+              placeholder="Example: AMMA-24"
+            />
+            <label
+              className="block text-sm font-medium"
+              htmlFor="securityCodeExpiresAt"
+            >
+              Valid until
+              <input
+                id="securityCodeExpiresAt"
+                name="securityCodeExpiresAt"
+                type="date"
+                disabled={!hasSecurityCodeExpiry}
+                defaultValue={getDefaultSecurityCodeExpiry()}
+                className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm font-normal outline-none disabled:bg-zinc-100 disabled:text-zinc-400 focus:border-teal-700"
+              />
+            </label>
+          </div>
+          <Checkbox
+            label="Expire this code after one month"
+            name="securityCodeHasExpiry"
+            defaultChecked
+            onChange={(checked) => setHasSecurityCodeExpiry(checked)}
+          />
+        </div>
+
         <h2 className="mt-8 text-base font-semibold">
           Escalation management
         </h2>
@@ -349,10 +453,12 @@ function Checkbox({
   label,
   name,
   defaultChecked,
+  onChange,
 }: {
   label: string;
   name: string;
   defaultChecked?: boolean;
+  onChange?: (checked: boolean) => void;
 }) {
   return (
     <label className="flex items-start gap-3 text-sm text-zinc-700">
@@ -360,11 +466,19 @@ function Checkbox({
         name={name}
         type="checkbox"
         defaultChecked={defaultChecked}
+        onChange={(event) => onChange?.(event.target.checked)}
         className="mt-0.5 size-4 rounded border-zinc-300 text-teal-700"
       />
       <span>{label}</span>
     </label>
   );
+}
+
+function getDefaultSecurityCodeExpiry() {
+  const date = new Date();
+  date.setMonth(date.getMonth() + 1);
+
+  return date.toISOString().slice(0, 10);
 }
 
 type FieldProps = {

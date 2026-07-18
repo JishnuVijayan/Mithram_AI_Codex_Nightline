@@ -25,6 +25,9 @@ type ParentInput = {
   emergencyName?: string;
   emergencyRelation?: string;
   emergencyPhone?: string;
+  customQuestions?: string;
+  securityCode?: string;
+  securityCodeExpiresAt?: Date | null;
 };
 
 type MedicineInput = {

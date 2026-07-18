@@ -39,6 +39,9 @@ model Parent {
   emergencyName     String?
   emergencyRelation String?
   emergencyPhone    String?
+  customQuestions   String?
+  securityCode      String?
+  securityCodeExpiresAt DateTime?
   medicines         Medicine[]
   callLogs          CallLog[]
   createdAt         DateTime   @default(now())

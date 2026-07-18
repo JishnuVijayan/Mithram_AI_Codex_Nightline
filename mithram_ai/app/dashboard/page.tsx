@@ -245,10 +245,8 @@ export default function DashboardPage() {
                 </h3>
                 <div className="mt-3 grid gap-3 text-sm text-zinc-700 sm:grid-cols-2">
                   <p>
-                    Failed-call retries:{" "}
-                    <span className="font-medium text-zinc-950">
-                      {selectedParent.retryCount}
-                    </span>
+                    Retries done:{" "}
+                    <span className="font-medium text-zinc-950">0</span>
                   </p>
                   <p>
                     Retry gap:{" "}

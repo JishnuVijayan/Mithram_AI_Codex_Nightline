@@ -2,12 +2,12 @@ export const QUESTIONS = {
   English: [
     "Did you take your morning BP medicine? Say yes or no. You can also press 1 for yes, or 2 for no.",
     "Did you sleep well last night? Say yes or no. You can also press 1 for yes, or 2 for no.",
-    "Do you need anything today, or have any appointments coming up? Say yes or no. You can also press 1 for yes, or 2 for no.",
+    "Today you have a doctor's appointment. Please be careful. Say yes if you understood. You can also press 1 for yes, or 2 for no.",
   ],
   Malayalam: [
     "Innu ravile BP marunnu kazhicho? Kazhichu allenkil kazhichilla ennu parayuka. Kazhichu aanenkil 1 press cheyyam. Kazhichilla aanenkil 2 press cheyyam.",
     "Innale rathri nannayi urangiyo? Urangi allenkil urangiyilla ennu parayuka. Urangi aanenkil 1 press cheyyam. Urangiyilla aanenkil 2 press cheyyam.",
-    "Innu enthenkilum avashyam undo, allenkil appointment undo? Undu allenkil illa ennu parayuka. Undu aanenkil 1 press cheyyam. Illa aanenkil 2 press cheyyam.",
+    "Innu doctors appointment undu. Sookshichu pone. Manassilayi enkil yes parayuka. Allenkil 1 press cheyyam.",
   ],
 } as const;
 

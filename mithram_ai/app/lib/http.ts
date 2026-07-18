@@ -9,5 +9,22 @@ export function validationError(error: unknown) {
     return jsonError(error.issues[0]?.message ?? "Invalid request", 400);
   }
 
-  return jsonError("Invalid request", 400);
+  return serverError(error);
+}
+
+export function serverError(error: unknown) {
+  if (error instanceof Error) {
+    if (error.message.includes("Can't reach database server")) {
+      return jsonError(
+        "Database is not reachable. Start the local database and try again.",
+        500,
+      );
+    }
+
+    if (process.env.NODE_ENV !== "production") {
+      return jsonError(error.message, 500);
+    }
+  }
+
+  return jsonError("Internal server error", 500);
 }

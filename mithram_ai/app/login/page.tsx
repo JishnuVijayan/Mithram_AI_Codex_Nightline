@@ -1,5 +1,6 @@
 "use client";
 
+import { PasswordInput } from "@/app/components/PasswordInput";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
@@ -36,10 +37,10 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="grid min-h-screen place-items-center bg-stone-50 px-4">
+    <main className="grid min-h-screen place-items-center bg-zinc-100 px-4 text-zinc-950">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded-md border border-zinc-200 bg-white p-6 shadow-sm"
+        className="w-full max-w-sm rounded-md border border-zinc-300 bg-white p-6 shadow-sm"
       >
         <div className="mb-6">
           <p className="text-sm font-medium text-teal-700">Mithram AI</p>
@@ -57,19 +58,13 @@ export default function LoginPage() {
           name="email"
           type="email"
           required
-          className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-teal-700"
+          className="mt-2 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-950 outline-none placeholder:text-zinc-400 focus:border-teal-700"
         />
 
         <label className="mt-4 block text-sm font-medium" htmlFor="password">
           Password
         </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          className="mt-2 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-teal-700"
-        />
+        <PasswordInput id="password" name="password" required />
 
         {error ? <p className="mt-4 text-sm text-red-600">{error}</p> : null}
 

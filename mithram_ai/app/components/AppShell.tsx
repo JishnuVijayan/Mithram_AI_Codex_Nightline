@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 
 type AppShellProps = {
@@ -6,6 +9,13 @@ type AppShellProps = {
 };
 
 export function AppShell({ children }: AppShellProps) {
+  const router = useRouter();
+
+  function handleLogout() {
+    localStorage.removeItem("mithram_user_id");
+    router.push("/login");
+  }
+
   return (
     <div className="min-h-screen bg-stone-50 text-zinc-950">
       <header className="border-b border-zinc-200 bg-white">
@@ -20,6 +30,13 @@ export function AppShell({ children }: AppShellProps) {
             <Link href="/subscription" className="hover:text-zinc-950">
               Subscription
             </Link>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="rounded-md border border-zinc-300 px-3 py-1.5 font-medium text-zinc-700 hover:border-zinc-400 hover:bg-zinc-50 hover:text-zinc-950"
+            >
+              Logout
+            </button>
           </nav>
         </div>
       </header>

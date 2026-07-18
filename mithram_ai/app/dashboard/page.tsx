@@ -311,10 +311,6 @@ export default function DashboardPage() {
                         {new Date(call.callDatetime).toLocaleString()}
                       </p>
                     </div>
-                    <div className="text-sm text-zinc-700">
-                      Medicine: {call.medicineFlag ?? "pending"} · Sentiment:{" "}
-                      {call.sentimentFlag ?? "pending"}
-                    </div>
                   </div>
 
                   <dl className="mt-4 grid gap-3 text-sm">

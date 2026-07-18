@@ -71,6 +71,7 @@ export default function NewParentPage() {
         phoneNumber: formData.get("phoneNumber"),
         relation: formData.get("relation"),
         preferredLanguage: formData.get("preferredLanguage"),
+        voicePreference: formData.get("voicePreference"),
         callFrequency: formData.get("callFrequency"),
         callTimes,
         retryCount: Number(formData.get("retryCount") || 0),
@@ -181,6 +182,30 @@ export default function NewParentPage() {
               <option value="3x_day">Three times daily</option>
             </select>
           </label>
+        </div>
+
+        <div className="mt-4 rounded-md border border-zinc-200 bg-zinc-50 p-4">
+          <label
+            className="block text-sm font-medium"
+            htmlFor="voicePreference"
+          >
+            Voice preference
+            <select
+              id="voicePreference"
+              name="voicePreference"
+              className="mt-2 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm font-normal outline-none focus:border-teal-700"
+              defaultValue="warm_female"
+            >
+              <option value="warm_female">Warm female voice</option>
+              <option value="calm_male">Calm male voice</option>
+              <option value="slow_friendly">Slow elder-friendly voice</option>
+              <option value="clear_neutral">Clear neutral voice</option>
+            </select>
+          </label>
+          <p className="mt-2 text-sm text-zinc-600">
+            Saved for future personalization. The current live call continues
+            with the fixed demo voice.
+          </p>
         </div>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-3">

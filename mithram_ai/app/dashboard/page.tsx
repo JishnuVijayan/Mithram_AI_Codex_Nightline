@@ -24,6 +24,7 @@ type Parent = {
   relation: string;
   phoneNumber: string;
   preferredLanguage: string;
+  voicePreference: string | null;
   retryCount: number;
   retryGapMinutes: number;
   notifySms: boolean;
@@ -283,6 +284,12 @@ export default function DashboardPage() {
                     </span>
                   </p>
                   <p>
+                    Voice preference:{" "}
+                    <span className="font-medium text-zinc-950">
+                      {formatVoicePreference(selectedParent.voicePreference)}
+                    </span>
+                  </p>
+                  <p>
                     Custom questions:{" "}
                     <span className="font-medium text-zinc-950">
                       {selectedParent.customQuestions
@@ -327,6 +334,21 @@ export default function DashboardPage() {
       </div>
     </AppShell>
   );
+}
+
+function formatVoicePreference(value: string | null) {
+  switch (value) {
+    case "calm_male":
+      return "Calm male voice";
+    case "slow_friendly":
+      return "Slow elder-friendly voice";
+    case "clear_neutral":
+      return "Clear neutral voice";
+    case "warm_female":
+      return "Warm female voice";
+    default:
+      return "Not selected";
+  }
 }
 
 function KpiCard({

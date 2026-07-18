@@ -14,6 +14,7 @@ type ParentInput = {
   phoneNumber: string;
   relation: string;
   preferredLanguage: string;
+  voicePreference?: string;
   callFrequency: string;
   callTimes: string;
   retryCount: number;

@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS Parent (
   phoneNumber TEXT NOT NULL,
   relation TEXT NOT NULL,
   preferredLanguage TEXT NOT NULL,
+  voicePreference TEXT,
   callFrequency TEXT NOT NULL,
   callTimes TEXT NOT NULL,
   retryCount INTEGER NOT NULL DEFAULT 0,

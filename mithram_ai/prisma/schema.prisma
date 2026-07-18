@@ -28,6 +28,7 @@ model Parent {
   phoneNumber       String
   relation          String
   preferredLanguage String
+  voicePreference   String?
   callFrequency     String
   callTimes         String
   retryCount        Int        @default(0)

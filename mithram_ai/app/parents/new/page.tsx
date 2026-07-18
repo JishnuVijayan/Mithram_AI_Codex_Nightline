@@ -4,6 +4,8 @@ import { AppShell } from "@/app/components/AppShell";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 
+type CallFrequency = "1x_day" | "2x_day" | "3x_day";
+
 export default function NewParentPage() {
   const router = useRouter();
   const [userId] = useState(() =>
@@ -12,9 +14,8 @@ export default function NewParentPage() {
       : localStorage.getItem("mithram_user_id") ?? "",
   );
   const [error, setError] = useState("");
-  const [callFrequency, setCallFrequency] = useState<"1x_day" | "3x_day">(
-    "1x_day",
-  );
+  const [callFrequency, setCallFrequency] =
+    useState<CallFrequency>("1x_day");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -134,11 +135,12 @@ export default function NewParentPage() {
               name="callFrequency"
               value={callFrequency}
               onChange={(event) =>
-                setCallFrequency(event.target.value as "1x_day" | "3x_day")
+                setCallFrequency(event.target.value as CallFrequency)
               }
               className="mt-2 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm font-normal outline-none focus:border-teal-700"
             >
               <option value="1x_day">Once daily</option>
+              <option value="2x_day">Twice daily</option>
               <option value="3x_day">Three times daily</option>
             </select>
           </label>
@@ -147,6 +149,21 @@ export default function NewParentPage() {
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           {callFrequency === "1x_day" ? (
             <Field label="Call time" name="callTimes" type="time" required />
+          ) : callFrequency === "2x_day" ? (
+            <>
+              <Field
+                label="Morning call"
+                name="callTimes"
+                type="time"
+                required
+              />
+              <Field
+                label="Evening call"
+                name="callTimes"
+                type="time"
+                required
+              />
+            </>
           ) : (
             <>
               <Field

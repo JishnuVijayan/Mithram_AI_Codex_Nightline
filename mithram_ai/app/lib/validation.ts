@@ -21,7 +21,7 @@ export const parentSchema = z.object({
   phoneNumber: z.string().trim().min(1, "Phone number is required"),
   relation: z.string().trim().min(1, "Relation is required"),
   preferredLanguage: z.enum(["English", "Malayalam"]),
-  callFrequency: z.enum(["1x_day", "3x_day"]),
+  callFrequency: z.enum(["1x_day", "2x_day", "3x_day"]),
   callTimes: z.string().trim().min(1, "Call time is required"),
   retryCount: z.coerce.number().int().min(0).max(5).default(0),
   retryGapMinutes: z.coerce.number().int().min(5).max(120).default(15),

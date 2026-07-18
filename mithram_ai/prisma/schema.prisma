@@ -11,3 +11,60 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  phone     String
+  parents   Parent[]
+  createdAt DateTime @default(now())
+}
+
+model Parent {
+  id                String     @id @default(cuid())
+  userId            String
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name              String
+  phoneNumber       String
+  relation          String
+  preferredLanguage String
+  callFrequency     String
+  callTimes         String
+  medicines         Medicine[]
+  callLogs          CallLog[]
+  createdAt         DateTime   @default(now())
+
+  @@index([userId])
+}
+
+model Medicine {
+  id        String   @id @default(cuid())
+  parentId  String
+  parent    Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  name      String
+  dosage    String
+  timeOfDay String
+  createdAt DateTime @default(now())
+
+  @@index([parentId])
+}
+
+model CallLog {
+  id            String   @id @default(cuid())
+  parentId      String
+  parent        Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  callDatetime  DateTime @default(now())
+  status        String
+  callSid       String?
+  q1Answer      String?
+  q2Answer      String?
+  q3Answer      String?
+  medicineFlag  String?
+  sentimentFlag String?
+  createdAt     DateTime @default(now())
+
+  @@index([parentId])
+  @@index([status])
+}

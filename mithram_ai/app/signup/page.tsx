@@ -35,7 +35,7 @@ export default function SignupPage() {
     }
 
     localStorage.setItem("mithram_user_id", payload.userId);
-    router.push("/parents/new");
+    router.push("/subscription");
   }
 
   return (

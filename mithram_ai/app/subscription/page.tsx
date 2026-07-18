@@ -1,10 +1,11 @@
 import { AppShell } from "@/app/components/AppShell";
+import Link from "next/link";
 
 const tiers = [
   {
-    name: "Care Basic",
-    price: "Free",
-    detail: "For one demo parent and manual calls.",
+    name: "Trial",
+    price: "₹0",
+    detail: "7 days free with one parent, manual calls, and live transcripts.",
   },
   {
     name: "Care Plus",
@@ -21,11 +22,32 @@ const tiers = [
 export default function SubscriptionPage() {
   return (
     <AppShell>
-      <div>
-        <h1 className="text-2xl font-semibold">Subscription</h1>
+      <section className="rounded-md border border-teal-200 bg-teal-50 p-5">
+        <p className="text-sm font-medium text-teal-800">New account benefit</p>
+        <div className="mt-2 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+          <div>
+            <h1 className="text-2xl font-semibold text-teal-950">
+              Start with a 7-day free trial
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm text-teal-900">
+              Try Mithram AI with live check-in calls, transcripts, caregiver
+              dashboard, and escalation-ready setup before choosing a paid plan.
+            </p>
+          </div>
+          <Link
+            href="/parents/new"
+            className="inline-flex rounded-md bg-teal-700 px-4 py-2 text-sm font-medium text-white"
+          >
+            Continue setup
+          </Link>
+        </div>
+      </section>
+
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold">Plans</h2>
         <p className="mt-2 max-w-2xl text-sm text-zinc-600">
-          Static pricing shell for the prototype. Payment integration comes
-          after the core call loop is working.
+          Pricing is a business-oriented prototype shell. Payment collection can
+          be connected after the core care workflow is stable.
         </p>
       </div>
 
@@ -42,7 +64,7 @@ export default function SubscriptionPage() {
               type="button"
               className="mt-5 w-full rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-800"
             >
-              Choose plan
+              {tier.name === "Trial" ? "Active trial" : "Choose plan"}
             </button>
           </article>
         ))}

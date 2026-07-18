@@ -97,3 +97,42 @@ export function saveCallSid(logId: string, callSid: string) {
     data: { callSid },
   });
 }
+
+export function getCallLogWithParent(logId: string) {
+  return prisma.callLog.findUnique({
+    where: { id: logId },
+    include: { parent: true },
+  });
+}
+
+export function saveCallAnswer(logId: string, step: number, answer: string) {
+  const answerField = `q${step}Answer`;
+
+  if (!["q1Answer", "q2Answer", "q3Answer"].includes(answerField)) {
+    throw new Error("Invalid call question step");
+  }
+
+  return prisma.callLog.update({
+    where: { id: logId },
+    data: {
+      [answerField]: answer,
+    },
+  });
+}
+
+export function markCallAnswered(logId: string) {
+  return prisma.callLog.update({
+    where: { id: logId },
+    data: { status: "answered" },
+  });
+}
+
+export function updateCallStatusIfInProgress(logId: string, status: string) {
+  return prisma.callLog.updateMany({
+    where: {
+      id: logId,
+      status: "in_progress",
+    },
+    data: { status },
+  });
+}

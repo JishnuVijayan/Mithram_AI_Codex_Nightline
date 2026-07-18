@@ -27,6 +27,22 @@ type Parent = {
   latestCall: CallLog | null;
 };
 
+type DashboardStats = {
+  totalParents: number;
+  totalCalls: number;
+  attendedCalls: number;
+  unattendedCalls: number;
+  activeCalls: number;
+};
+
+const emptyStats: DashboardStats = {
+  totalParents: 0,
+  totalCalls: 0,
+  attendedCalls: 0,
+  unattendedCalls: 0,
+  activeCalls: 0,
+};
+
 export default function DashboardPage() {
   const router = useRouter();
   const [userId] = useState(() =>
@@ -37,17 +53,23 @@ export default function DashboardPage() {
   const [parents, setParents] = useState<Parent[]>([]);
   const [selectedParentId, setSelectedParentId] = useState("");
   const [calls, setCalls] = useState<CallLog[]>([]);
+  const [stats, setStats] = useState<DashboardStats>(emptyStats);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isStartingCall, setIsStartingCall] = useState(false);
 
   const loadParents = useCallback(async (nextUserId: string) => {
     setIsLoading(true);
-    const response = await fetch(`/api/parents/${nextUserId}`);
-    const payload = await response.json();
+    const [parentsResponse, statsResponse] = await Promise.all([
+      fetch(`/api/parents/${nextUserId}`),
+      fetch(`/api/dashboard/${nextUserId}`),
+    ]);
+    const payload = await parentsResponse.json();
+    const statsPayload = await statsResponse.json();
     const nextParents = payload.parents ?? [];
 
     setParents(nextParents);
+    setStats(statsPayload.stats ?? emptyStats);
     setSelectedParentId((current) => current || nextParents[0]?.id || "");
     setIsLoading(false);
   }, []);
@@ -92,6 +114,9 @@ export default function DashboardPage() {
 
     setMessage(`Call started: ${payload.callSid}`);
     await loadCalls(parentId);
+    if (userId) {
+      await loadParents(userId);
+    }
   }
 
   const selectedParent = parents.find((parent) => parent.id === selectedParentId);
@@ -118,6 +143,18 @@ export default function DashboardPage() {
           {message}
         </p>
       ) : null}
+
+      <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <KpiCard label="Parents" value={stats.totalParents} />
+        <KpiCard label="Total calls" value={stats.totalCalls} />
+        <KpiCard label="Attended" value={stats.attendedCalls} tone="good" />
+        <KpiCard
+          label="Unattended"
+          value={stats.unattendedCalls}
+          tone="alert"
+        />
+        <KpiCard label="In progress" value={stats.activeCalls} tone="active" />
+      </section>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[340px_1fr]">
         <section className="rounded-md border border-zinc-200 bg-white p-4 shadow-sm">
@@ -217,6 +254,30 @@ export default function DashboardPage() {
         </section>
       </div>
     </AppShell>
+  );
+}
+
+function KpiCard({
+  label,
+  value,
+  tone = "neutral",
+}: {
+  label: string;
+  value: number;
+  tone?: "neutral" | "good" | "alert" | "active";
+}) {
+  const toneClass = {
+    neutral: "border-zinc-200 bg-white text-zinc-950",
+    good: "border-emerald-200 bg-emerald-50 text-emerald-950",
+    alert: "border-rose-200 bg-rose-50 text-rose-950",
+    active: "border-amber-200 bg-amber-50 text-amber-950",
+  }[tone];
+
+  return (
+    <article className={`rounded-md border p-4 shadow-sm ${toneClass}`}>
+      <p className="text-sm font-medium text-current/70">{label}</p>
+      <p className="mt-2 text-3xl font-semibold">{value}</p>
+    </article>
   );
 }
 

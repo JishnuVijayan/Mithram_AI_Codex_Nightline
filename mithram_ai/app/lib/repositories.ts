@@ -136,3 +136,28 @@ export function updateCallStatusIfInProgress(logId: string, status: string) {
     data: { status },
   });
 }
+
+export async function getDashboardStats(userId: string) {
+  const callWhere = {
+    parent: {
+      userId,
+    },
+  };
+
+  const [totalParents, totalCalls, attendedCalls, unattendedCalls, activeCalls] =
+    await Promise.all([
+      prisma.parent.count({ where: { userId } }),
+      prisma.callLog.count({ where: callWhere }),
+      prisma.callLog.count({ where: { ...callWhere, status: "answered" } }),
+      prisma.callLog.count({ where: { ...callWhere, status: "no_answer" } }),
+      prisma.callLog.count({ where: { ...callWhere, status: "in_progress" } }),
+    ]);
+
+  return {
+    totalParents,
+    totalCalls,
+    attendedCalls,
+    unattendedCalls,
+    activeCalls,
+  };
+}

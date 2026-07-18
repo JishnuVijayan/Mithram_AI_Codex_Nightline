@@ -9,7 +9,7 @@
 
   "start": "next start",
 
-  "lint": "next lint",
+  "lint": "eslint .",
 
   "lint:fix": "next lint --fix",
 

@@ -24,6 +24,9 @@ export function AppShell({ children }: AppShellProps) {
             Mithram AI
           </Link>
           <nav className="flex items-center gap-4 text-sm text-zinc-600">
+            <Link href="/dashboard" className="hover:text-zinc-950">
+              Dashboard
+            </Link>
             <Link href="/parents/new" className="hover:text-zinc-950">
               Add Parent
             </Link>
